@@ -1,0 +1,21 @@
+MOBILE APP USAGE & USER ENGAGEMENT ANALYSIS - SUMMARY
+Student: Mudit Yadav | Admission Number: 2026B01010349
+
+Rows (raw)               : 1015
+Duplicate records removed: 15
+Total sessions           : 1000
+Unique users             : 482
+Average duration (mins)  : 61.81
+Median duration (mins)   : 62.25
+Std deviation (mins)     : 33.94
+Most used feature        : Video
+Peak hour                : 8:00
+Busiest weekday          : Wednesday
+IQR long-session outliers: 0
+
+Recommendations:
+1. Improve the Messaging feature: it has the lowest average rating (2.92/5) versus Payments at 3.27/5. Review its user experience and collect feedback.
+2. Make Search sessions more engaging: it has the shortest average session (57.73 mins). Consider better results, suggestions or follow-up content.
+3. Time notifications and updates around peak usage: 8:00 is the busiest hour and Wednesday the busiest day, while 5:00 and Monday are quietest. Use quiet slots for re-engagement campaigns.
+4. Optimise the Web experience: it has the shortest average session (59.57 mins). Test performance and layout on that platform.
+5. Target the 55+ age group with onboarding and offers: it has the fewest sessions (187), while 25-34 has the most.

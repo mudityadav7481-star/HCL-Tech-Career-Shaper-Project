@@ -1,0 +1,358 @@
+
+================================================================================
+TASK 1: Load and inspect the app usage dataset
+================================================================================
+Dataset file : 24_mobile_app_usage.csv
+Shape        : 1015 rows x 9 columns
+
+Column names : ['Session_ID', 'User_ID', 'Session_Date', 'Feature_Used', 'Session_Duration_Mins', 'User_Rating', 'Device_Type', 'Age_Group', 'App_Version']
+
+Data types:
+Session_ID                   str
+User_ID                      str
+Session_Date                 str
+Feature_Used                 str
+Session_Duration_Mins    float64
+User_Rating              float64
+Device_Type                  str
+Age_Group                    str
+App_Version              float64
+dtype: object
+
+First 5 rows:
+  Session_ID   User_ID         Session_Date Feature_Used  Session_Duration_Mins  User_Rating Device_Type Age_Group  App_Version
+0   SE000000  USR00198  2025-04-29 08:00:00        Video                   39.1          4.6     Android     18-24          1.2
+1   SE000001  USR00197  2026-03-02 02:00:00     Shopping                   55.1          2.9     Android     18-24          2.0
+2   SE000002  USR00126  2026-04-26 09:00:00        Video                   40.7          4.4         iOS     35-44          1.2
+3   SE000003  USR00398  2026-08-21 13:00:00       Search                   14.6          3.3     Android     25-34          2.0
+4   SE000004  USR00105  2025-10-09 13:00:00    Messaging                   39.6          1.1     Android       55+          1.2
+
+Basic statistics of numeric columns:
+       Session_Duration_Mins  User_Rating  App_Version
+count                 990.00       989.00      1015.00
+mean                   61.89         3.09         1.47
+std                    34.36         1.15         0.47
+min                     1.30         1.00         1.00
+25%                    31.35         2.10         1.10
+50%                    62.30         3.10         1.20
+75%                    92.18         4.10         2.00
+max                   119.80         5.00         2.10
+
+================================================================================
+TASK 2: Missing values and duplicate Session_ID records
+================================================================================
+Missing values per column (raw data):
+Session_ID                0
+User_ID                   0
+Session_Date              0
+Feature_Used              0
+Session_Duration_Mins    25
+User_Rating              26
+Device_Type               0
+Age_Group                 0
+App_Version               0
+dtype: int64
+
+Extra (repeated) Session_ID records : 15
+Of these, fully identical rows       : 15
+
+Session_IDs that appear more than once (first 6 rows shown):
+     Session_ID   User_ID         Session_Date Feature_Used  Session_Duration_Mins  User_Rating Device_Type Age_Group  \
+76     SE000076  USR00458  2025-12-12 09:00:00        Video                   95.9          NaN         iOS     45-54   
+1011   SE000076  USR00458  2025-12-12 09:00:00        Video                   95.9          NaN         iOS     45-54   
+136    SE000136  USR00144  2025-04-27 23:00:00    Messaging                   84.4          2.3         iOS     45-54   
+1009   SE000136  USR00144  2025-04-27 23:00:00    Messaging                   84.4          2.3         iOS     45-54   
+411    SE000411  USR00386  2026-02-28 11:00:00       Search                   12.7          3.4         Web     18-24   
+1004   SE000411  USR00386  2026-02-28 11:00:00       Search                   12.7          3.4         Web     18-24   
+
+      App_Version  
+76            1.2  
+1011          1.2  
+136           1.0  
+1009          1.0  
+411           2.0  
+1004          2.0  
+
+After removing duplicates: 1015 -> 1000 rows
+
+================================================================================
+TASK 3: Handling missing Session_Duration_Mins and User_Rating
+================================================================================
+Missing values after removing duplicates:
+Session_Duration_Mins    25
+User_Rating              25
+dtype: int64
+
+Method used : fill with the median of the same Feature_Used.
+Reason      : median resists extreme values; feature-wise values are more
+              realistic than one global value; no rows are lost.
+
+Duration values filled : 25
+Rating values filled   : 25
+
+Missing values after cleaning:
+Session_ID               0
+User_ID                  0
+Session_Date             0
+Feature_Used             0
+Session_Duration_Mins    0
+User_Rating              0
+Device_Type              0
+Age_Group                0
+App_Version              0
+Duration_Was_Missing     0
+Rating_Was_Missing       0
+dtype: int64
+
+================================================================================
+TASK 4: Datetime conversion and feature extraction
+================================================================================
+Session_Date data type : datetime64[us]
+Date range             : 2025-01-01 02:00:00  to  2026-10-31 15:00:00
+
+Sample of the new columns:
+         Session_Date  Year  Month Month_Name   Weekday  Hour
+0 2025-04-29 08:00:00  2025      4      April   Tuesday     8
+1 2026-03-02 02:00:00  2026      3      March    Monday     2
+2 2026-04-26 09:00:00  2026      4      April    Sunday     9
+3 2026-08-21 13:00:00  2026      8     August    Friday    13
+4 2025-10-09 13:00:00  2025     10    October  Thursday    13
+
+================================================================================
+TASK 5: Key metrics
+================================================================================
+Total sessions           : 1000
+Unique users             : 482
+Average session duration : 61.81 minutes
+Average sessions per user: 2.07
+
+================================================================================
+TASK 6: Most frequently used app features
+================================================================================
+Note: the dataset contains only 8 distinct features, so the
+'top 10' table below shows all 8 of them, ranked.
+
+              Rank  Sessions  Share_%
+Feature_Used                         
+Video            1       133     13.3
+Messaging        2       131     13.1
+Maps             3       130     13.0
+Shopping         4       125     12.5
+Profile          5       125     12.5
+Search           6       124     12.4
+Payments         7       117     11.7
+News             8       115     11.5
+
+================================================================================
+TASK 7: Average session duration by device type
+================================================================================
+             Sessions  Avg_Duration_Mins
+Device_Type                             
+iOS               348              64.34
+Android           336              61.28
+Web               316              59.57
+
+Longest average sessions : iOS (64.34 mins)
+Shortest average sessions: Web (59.57 mins)
+
+================================================================================
+TASK 8: Age groups ranked by total sessions
+================================================================================
+           Rank  Sessions  Share_%
+Age_Group                         
+25-34         1       206     20.6
+35-44         2       204     20.4
+45-54         3       202     20.2
+18-24         4       201     20.1
+55+           5       187     18.7
+
+================================================================================
+TASK 9: Average user rating by app feature
+================================================================================
+              Rank  Sessions  Avg_Rating
+Feature_Used                            
+Payments         1       117        3.27
+Video            2       133        3.25
+Search           3       124        3.12
+Maps             4       130        3.09
+Shopping         5       125        3.06
+Profile          6       125        2.99
+News             7       115        2.95
+Messaging        8       131        2.92
+
+================================================================================
+TASK 10: Peak usage hours and busiest weekdays
+================================================================================
+Top 5 busiest hours of the day (24-hour clock):
+      Sessions
+Hour          
+8           55
+1           51
+18          47
+2           46
+20          46
+
+Peak hour     : 8:00 (55 sessions)
+Quietest hour : 5:00 (31 sessions)
+
+Weekdays ranked by number of sessions:
+           Rank  Sessions  Share_%
+Weekday                           
+Wednesday     1       156     15.6
+Sunday        2       152     15.2
+Friday        3       145     14.5
+Saturday      4       141     14.1
+Tuesday       5       139     13.9
+Thursday      6       135     13.5
+Monday        7       132     13.2
+
+Busiest weekday  : Wednesday
+Quietest weekday : Monday
+
+Extra: sessions by calendar month
+Month_Name  Sessions  Years_Covered  Sessions_per_Year_Covered
+   January       101              2                       50.5
+  February        89              2                       44.5
+     March       111              2                       55.5
+     April        93              2                       46.5
+       May        91              2                       45.5
+      June        84              2                       42.0
+      July        85              2                       42.5
+    August        89              2                       44.5
+ September        81              2                       40.5
+   October        87              2                       43.5
+  November        46              1                       46.0
+  December        43              1                       43.0
+Note: the data spans Jan 2025 - Oct 2026, so Nov and Dec appear in only one
+year. The last column makes the months fairly comparable.
+
+================================================================================
+TASK 11: List of top features and tuple of device categories
+================================================================================
+List of most-used features (rank order):
+  1. Video
+  2. Messaging
+  3. Maps
+  4. Shopping
+  5. Profile
+  6. Search
+  7. Payments
+  8. News
+
+Tuple of fixed device categories: ('Android', 'iOS', 'Web')
+Check: the tuple matches the devices found in the data.
+
+================================================================================
+TASK 12: Unique users (set) and average duration function
+================================================================================
+Unique users using a set       : 482
+Unique users using nunique()   : 482
+Both methods agree: True
+
+Average session duration per feature (using the function):
+  Video     : 61.07 mins
+  Messaging : 63.05 mins
+  Maps      : 64.45 mins
+  Shopping  : 59.74 mins
+  Profile   : 65.22 mins
+  Search    : 57.73 mins
+  Payments  : 61.63 mins
+  News      : 61.37 mins
+
+Selected feature -> Video: 61.07 mins
+Unknown feature test  -> 'Gaming': None
+
+================================================================================
+TASK 13: NumPy statistics of session duration
+================================================================================
+Array length       : 1000
+Mean               : 61.81 mins
+Median             : 62.25 mins
+Standard deviation : 33.94 mins (sample, ddof=1)
+Minimum            : 1.30 mins
+Maximum            : 119.80 mins
+
+Extra: correlation between duration and rating = -0.011
+Interpretation: a value near 0 means almost no linear association.
+Correlation never proves causation.
+
+================================================================================
+TASK 14: Unusually long sessions (IQR) and engagement labels
+================================================================================
+Q1 (25th percentile) : 32.08
+Q3 (75th percentile) : 91.33
+IQR                  : 59.25
+Upper fence (Q3 + 1.5*IQR): 180.20 mins
+Lower fence (Q1 - 1.5*IQR): -56.80 mins
+
+Unusually long sessions found: 0
+No session exceeds 180.20 mins (the longest is 119.8 mins), so there are no IQR outliers in this dataset.
+Durations are spread fairly evenly between the minimum and maximum.
+
+Engagement label rules (quartile-based):
+  Low    : duration < 32.08 mins
+  Medium : 32.08 <= duration <= 91.33 mins
+  High   : duration > 91.33 mins
+
+Engagement label distribution:
+                  Sessions  Share_%
+Engagement_Level                   
+Low                    250     25.0
+Medium                 500     50.0
+High                   250     25.0
+
+Sample of labelled sessions:
+Session_ID Feature_Used  Session_Duration_Mins Engagement_Level
+  SE000000        Video                   39.1           Medium
+  SE000001     Shopping                   55.1           Medium
+  SE000002        Video                   40.7           Medium
+  SE000003       Search                   14.6              Low
+  SE000004    Messaging                   39.6           Medium
+  SE000005      Profile                    1.3              Low
+  SE000006         Maps                   26.2              Low
+  SE000007       Search                   77.0           Medium
+
+Engagement mix by device type (% of that device's sessions):
+Engagement_Level   Low  Medium  High
+Device_Type                         
+Android           25.0    50.3  24.7
+Web               25.6    52.8  21.5
+iOS               24.4    47.1  28.4
+
+================================================================================
+TASK 15: AppUser class and recommendations
+================================================================================
+AppUser objects created: 482
+Examples (device = the user's most-used device):
+   AppUser(user_id=USR00001, device_type=Web)
+   AppUser(user_id=USR00002, device_type=Android)
+   AppUser(user_id=USR00003, device_type=iOS)
+   AppUser(user_id=USR00004, device_type=iOS)
+   AppUser(user_id=USR00005, device_type=Android)
+
+Users per primary device (from the AppUser objects):
+iOS        175
+Android    161
+Web        146
+Name: count, dtype: int64
+
+================================================================================
+FIVE RECOMMENDATIONS TO IMPROVE APP ENGAGEMENT
+================================================================================
+1. Improve the Messaging feature: it has the lowest average rating (2.92/5) versus Payments at 3.27/5. Review its user experience and collect feedback.
+2. Make Search sessions more engaging: it has the shortest average session (57.73 mins). Consider better results, suggestions or follow-up content.
+3. Time notifications and updates around peak usage: 8:00 is the busiest hour and Wednesday the busiest day, while 5:00 and Monday are quietest. Use quiet slots for re-engagement campaigns.
+4. Optimise the Web experience: it has the shortest average session (59.57 mins). Test performance and layout on that platform.
+5. Target the 55+ age group with onboarding and offers: it has the fewest sessions (187), while 25-34 has the most.
+
+Limitations: this is a synthetic teaching dataset, and differences between
+groups are small. These recommendations are suggestions based on observed
+associations; they do not prove cause and effect.
+
+================================================================================
+SAVING OUTPUT FILES
+================================================================================
+Cleaned dataset saved : /home/claude/proj/outputs/cleaned_mobile_app_usage.csv
+Summary text saved    : /home/claude/proj/outputs/analysis_summary.txt
+
+All 15 tasks completed successfully.
